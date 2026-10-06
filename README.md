@@ -1,4 +1,4 @@
-Solar System Application (Python) 
+#Solar System Application (Python)
 
 Key Requirements: 
 1. Displays information about planets within our solar system including
