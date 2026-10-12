@@ -21,8 +21,22 @@ PLANETS = [
 ]
 
 
-# --- TEST STAGE 1 ---
 if __name__ == "__main__":
-    print(f"Loaded {len(PLANETS)} planets successfully!")
-    for planet in PLANETS:
-        print(f"- {planet.name}, Mass: {planet.mass_kg}, Average distance from sun (million,km): {planet.distance_km}, Diameter: {planet.diameter_km}, Number of Moons: {planet.moon_count}, Sample moons: {planet.moons}")
+    import tkinter as tk
+
+    root = tk.Tk()
+    root.title("Planet Explorer")
+    root.geometry("480x100")
+
+    buttons_frame = tk.Frame(root)
+    buttons_frame.pack(expand=True)
+
+    for index, planet in enumerate(PLANETS):
+        button = tk.Button(
+            buttons_frame,
+            text=planet.name,
+            width=10,
+        )
+        button.grid(row=0, column=index, padx=3, pady=5)
+
+    root.mainloop()
