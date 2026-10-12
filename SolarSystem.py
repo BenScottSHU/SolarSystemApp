@@ -20,6 +20,17 @@ PLANETS = [
     Planet("Neptune", "1.02413×10^26kg", 4495, 49_244, 16, ("Triton", "Nereid", "Proteus", "Larissa")),
 ]
 
+PLANET_TEXT_COLOURS = {
+    "Mercury": "#555555",
+    "Venus": "#9C5700",
+    "Earth": "#176B2C",
+    "Mars": "#B22222",
+    "Jupiter": "#8B4513",
+    "Saturn": "#806000",
+    "Uranus": "#007C91",
+    "Neptune": "#2446A6",
+}
+
 
 if __name__ == "__main__":
     import tkinter as tk
@@ -36,6 +47,7 @@ if __name__ == "__main__":
             buttons_frame,
             text=planet.name,
             width=10,
+            fg=PLANET_TEXT_COLOURS[planet.name],
         )
         button.grid(row=0, column=index, padx=3, pady=5)
 
