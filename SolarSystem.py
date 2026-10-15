@@ -12,7 +12,7 @@ PLANETS = [
     #information from science.nasa.gov
     Planet("Mercury", "3.3011×10^23kg", 58 , 4_879, 0, ()),
     Planet("Venus", "4.8675 × 10^24kg", 108, 12_104, 0, ()),
-    Planet("Earth", "5.9722x10^24kg", 150, 12_756, 1, ("Moon")),
+    Planet("Earth", "5.9722x10^24kg", 150, 12_756, 1, ("Moon",)),
     Planet("Mars", "6.4171x10^23kg", 228, 6_779, 2, ("Phobus", "Deimos" )),
     Planet("Jupiter", "1.8982×10^27kg", 778, 139_820, 95, ("Io", "Europa", "Ganymede", "Callisto")),
     Planet("Saturn", "5.6834×10^26kg", 1434, 116_460, 146, ("Titan", "Enceladus", "Rhea", "Iapetus")),
