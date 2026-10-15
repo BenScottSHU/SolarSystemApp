@@ -32,15 +32,29 @@ PLANET_TEXT_COLOURS = {
 }
 
 
+def show_planet(planet, details_label):
+    sample_moons = ", ".join(planet.moons) if planet.moons else "None"
+    details_label.config(
+        text=(
+            f"{planet.name}\n"
+            f"Mass: {planet.mass_kg}\n"
+            f"Average distance from the Sun: {planet.distance_km:,} million km\n"
+            f"Diameter: {planet.diameter_km:,} km\n"
+            f"Number of moons: {planet.moon_count}\n"
+            f"Sample moons: {sample_moons}"
+        )
+    )
+
+
 if __name__ == "__main__":
     import tkinter as tk
 
     root = tk.Tk()
     root.title("Planet Explorer")
-    root.geometry("480x100")
+    root.geometry("520x300")
 
     buttons_frame = tk.Frame(root)
-    buttons_frame.pack(expand=True)
+    buttons_frame.pack(pady=10)
 
     for index, planet in enumerate(PLANETS):
         button = tk.Button(
@@ -48,7 +62,16 @@ if __name__ == "__main__":
             text=planet.name,
             width=10,
             fg=PLANET_TEXT_COLOURS[planet.name],
+            command=lambda selected=planet: show_planet(selected, details_label),
         )
-        button.grid(row=0, column=index, padx=3, pady=5)
+        button.grid(row=index // 4, column=index % 4, padx=3, pady=5)
+
+    details_label = tk.Label(
+        root,
+        text="Click on a planet's button to see its information.",
+        justify="left",
+        anchor="w",
+    )
+    details_label.pack(fill="x", padx=20, pady=10)
 
     root.mainloop()
