@@ -46,25 +46,40 @@ def show_planet(planet, details_label):
     )
 
 
+def answer_question(planet, question):
+    question = question.lower()
+
+    if any(word in question for word in ("diameter", "big", "size", "wide")):
+        return f"{planet.name} is {planet.diameter_km:,} km in diameter."
+    if any(word in question for word in ("distance", "far", "sun")):
+        return (
+            f"{planet.name} is an average of "
+            f"{planet.distance_km:,} million km from the Sun."
+        )
+    if any(word in question for word in ("mass", "heavy", "weigh")):
+        return f"The mass of {planet.name} is {planet.mass_kg}."
+    if "moon" in question:
+        sample_moons = ", ".join(planet.moons) if planet.moons else "None"
+        return (
+            f"{planet.name} has {planet.moon_count} moons. "
+            f"Some known moons are: {sample_moons}."
+        )
+    return (
+        "I can answer questions about size, distance from the Sun, mass, "
+        "or moons. Try asking, for example, “How big is this planet?”"
+    )
+
+
 if __name__ == "__main__":
     import tkinter as tk
 
     root = tk.Tk()
     root.title("Planet Explorer")
-    root.geometry("520x300")
+    root.geometry("520x390")
+    selected_planet = [None]
 
     buttons_frame = tk.Frame(root)
     buttons_frame.pack(pady=10)
-
-    for index, planet in enumerate(PLANETS):
-        button = tk.Button(
-            buttons_frame,
-            text=planet.name,
-            width=10,
-            fg=PLANET_TEXT_COLOURS[planet.name],
-            command=lambda selected=planet: show_planet(selected, details_label),
-        )
-        button.grid(row=index // 4, column=index % 4, padx=3, pady=5)
 
     details_label = tk.Label(
         root,
@@ -73,5 +88,46 @@ if __name__ == "__main__":
         anchor="w",
     )
     details_label.pack(fill="x", padx=20, pady=10)
+
+    def select_planet(planet):
+        selected_planet[0] = planet
+        show_planet(planet, details_label)
+        answer_label.config(text=f"Ask a question about {planet.name}.")
+
+    for index, planet in enumerate(PLANETS):
+        button = tk.Button(
+            buttons_frame,
+            text=planet.name,
+            width=10,
+            fg=PLANET_TEXT_COLOURS[planet.name],
+            command=lambda selected=planet: select_planet(selected),
+        )
+        button.grid(row=index // 4, column=index % 4, padx=3, pady=5)
+
+    question_label = tk.Label(root, text="Ask a question about the selected planet:")
+    question_label.pack(anchor="w", padx=20, pady=(10, 2))
+
+    question_entry = tk.Entry(root)
+    question_entry.pack(fill="x", padx=20)
+
+    answer_label = tk.Label(root, text="", justify="left", anchor="w", wraplength=480)
+    answer_label.pack(fill="x", padx=20, pady=10)
+
+    def search_question(event=None):
+        if selected_planet[0] is None:
+            answer_label.config(text="Select a planet first.")
+            return
+
+        input_widget = event.widget if event is not None else question_entry
+        question = input_widget.get().strip()
+        if not question:
+            answer_label.config(text="Type a question first.")
+            return
+
+        answer_label.config(text=answer_question(selected_planet[0], question))
+
+    search_button = tk.Button(root, text="Ask", command=search_question)
+    search_button.pack(anchor="w", padx=20)
+    question_entry.bind("<Return>", search_question)
 
     root.mainloop()
