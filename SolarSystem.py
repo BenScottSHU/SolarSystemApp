@@ -1,5 +1,7 @@
 import tkinter as tk
 
+
+# Stores the facts and button text colour used for one planet.
 class Planet:
     def __init__(self,name,mass_kg,distance_km,diameter_km,moon_count,moons,text_colour,):
         self.name = name
@@ -12,7 +14,7 @@ class Planet:
 
 
 PLANETS = [
-    #information from science.nasa.gov
+    # Planet distances are in millions of kilometres; figures are from NASA.
     Planet("Mercury", "3.3011×10^23kg", 58, 4_879, 0, (), "#555555"),
     Planet("Venus", "4.8675 × 10^24kg", 108, 12_104, 0, (), "#9C5700"),
     Planet("Earth", "5.9722x10^24kg", 150, 12_756, 1, ("Moon",), "#176B2C"),
@@ -25,6 +27,7 @@ PLANETS = [
 
 
 def answer_question(planet, question):
+    # Match common keywords in the question to the planet fact being requested.
     question = question.lower()
 
     if "everything" in question or "all about" in question:
@@ -58,15 +61,26 @@ def answer_question(planet, question):
     )
 
 
+# Builds the window and handles planet selection, questions, and reset.
 class PlanetGui:
     def __init__(self, root):
         self.root = root
         self.selected_planet = None
         self.root.title("Solar Planets")
-        self.root.geometry("520x390")
+        self.root.geometry("520x420")
         self.create_widgets()
 
     def create_widgets(self):
+        banner = tk.Label(
+            self.root,
+            text="The 8 Planets of the Solar System",
+            font=("TkDefaultFont", 20, "bold"),
+            bg="#14213D",
+            fg="white",
+            pady=12,
+        )
+        banner.pack(fill="x")
+
         buttons_frame = tk.Frame(self.root)
         buttons_frame.pack(pady=10)
 
@@ -86,6 +100,7 @@ class PlanetGui:
                 width=12,
                 height=2,
                 fg=planet.text_colour,
+                # Capture this planet so each button selects its own planet.
                 command=lambda selected=planet: self.select_planet(selected),
             )
             button.grid(row=index // 4, column=index % 4, padx=5, pady=6)
@@ -108,19 +123,48 @@ class PlanetGui:
         )
         self.answer_label.pack(fill="x", padx=20, pady=10)
 
+        button_frame = tk.Frame(self.root)
+        button_frame.pack(anchor="w", padx=20)
+
         search_button = tk.Button(
-            self.root,
+            button_frame,
             text="Ask",
             width=12,
             height=2,
             command=self.search_question,
         )
-        search_button.pack(anchor="w", padx=20)
+        search_button.pack(side="left", padx=(0, 8))
+
+        reset_button = tk.Button(
+            button_frame,
+            text="Reset",
+            width=12,
+            height=2,
+            command=self.reset,
+        )
+        reset_button.pack(side="left")
         self.question_entry.bind("<Return>", self.search_question)
+
+        credit_label = tk.Label(
+            self.root,
+            text="By Ben Scott",
+            font=("TkDefaultFont", 9),
+            fg="#555555",
+        )
+        credit_label.pack(side="bottom", anchor="e", padx=12, pady=6)
 
     def select_planet(self, planet):
         self.selected_planet = planet
         self.selection_label.config(text=f"Selected planet: {planet.name}")
+        self.answer_label.config(text="")
+
+    def reset(self):
+        # Restore the prompt and clear the current selection and conversation.
+        self.selected_planet = None
+        self.selection_label.config(
+            text="Select a planet, then ask a question about it."
+        )
+        self.question_entry.delete(0, tk.END)
         self.answer_label.config(text="")
 
     def search_question(self, event=None):
@@ -128,6 +172,7 @@ class PlanetGui:
             self.answer_label.config(text="Select a planet first.")
             return
 
+        # Enter passes an event; the Ask button calls this without one.
         input_widget = event.widget if event is not None else self.question_entry
         question = input_widget.get().strip()
         if not question:
