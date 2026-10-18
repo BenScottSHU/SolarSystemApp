@@ -1,3 +1,6 @@
+import tkinter as tk
+
+
 class Planet:
     def __init__(self, name, mass_kg, distance_km, diameter_km, moon_count, moons):
         self.name = name
@@ -66,64 +69,88 @@ def answer_question(planet, question):
     )
 
 
-if __name__ == "__main__":
-    import tkinter as tk
+class PlanetGui:
+    def __init__(self, root):
+        self.root = root
+        self.selected_planet = None
+        self.root.title("Solar Planets")
+        self.root.geometry("520x390")
+        self.create_widgets()
 
-    root = tk.Tk()
-    root.title("Planet Explorer")
-    root.geometry("520x390")
-    selected_planet = [None]
+    def create_widgets(self):
+        buttons_frame = tk.Frame(self.root)
+        buttons_frame.pack(pady=10)
 
-    buttons_frame = tk.Frame(root)
-    buttons_frame.pack(pady=10)
-
-    selection_label = tk.Label(
-        root,
-        text="Select a planet, then ask a question about it.",
-        justify="left",
-        anchor="w",
-    )
-    selection_label.pack(fill="x", padx=20, pady=10)
-
-    def select_planet(planet):
-        selected_planet[0] = planet
-        selection_label.config(text=f"Selected planet: {planet.name}")
-        answer_label.config(text="")
-
-    for index, planet in enumerate(PLANETS):
-        button = tk.Button(
-            buttons_frame,
-            text=planet.name,
-            width=10,
-            fg=PLANET_TEXT_COLOURS[planet.name],
-            command=lambda selected=planet: select_planet(selected),
+        self.selection_label = tk.Label(
+            self.root,
+            text="Select a planet, then ask a question about it.",
+            font=("TkDefaultFont", 12, "bold"),
+            justify="left",
+            anchor="w",
         )
-        button.grid(row=index // 4, column=index % 4, padx=3, pady=5)
+        self.selection_label.pack(fill="x", padx=20, pady=10)
 
-    question_label = tk.Label(root, text="Ask a question about the selected planet:")
-    question_label.pack(anchor="w", padx=20, pady=(10, 2))
+        for index, planet in enumerate(PLANETS):
+            button = tk.Button(
+                buttons_frame,
+                text=planet.name,
+                width=12,
+                height=2,
+                fg=PLANET_TEXT_COLOURS[planet.name],
+                command=lambda selected=planet: self.select_planet(selected),
+            )
+            button.grid(row=index // 4, column=index % 4, padx=5, pady=6)
 
-    question_entry = tk.Entry(root)
-    question_entry.pack(fill="x", padx=20)
+        question_label = tk.Label(
+            self.root,
+            text="Ask a question about the selected planet:",
+        )
+        question_label.pack(anchor="w", padx=20, pady=(10, 2))
 
-    answer_label = tk.Label(root, text="", justify="left", anchor="w", wraplength=480)
-    answer_label.pack(fill="x", padx=20, pady=10)
+        self.question_entry = tk.Entry(self.root)
+        self.question_entry.pack(fill="x", padx=20)
 
-    def search_question(event=None):
-        if selected_planet[0] is None:
-            answer_label.config(text="Select a planet first.")
+        self.answer_label = tk.Label(
+            self.root,
+            text="",
+            justify="left",
+            anchor="w",
+            wraplength=480,
+        )
+        self.answer_label.pack(fill="x", padx=20, pady=10)
+
+        search_button = tk.Button(
+            self.root,
+            text="Ask",
+            width=12,
+            height=2,
+            command=self.search_question,
+        )
+        search_button.pack(anchor="w", padx=20)
+        self.question_entry.bind("<Return>", self.search_question)
+
+    def select_planet(self, planet):
+        self.selected_planet = planet
+        self.selection_label.config(text=f"Selected planet: {planet.name}")
+        self.answer_label.config(text="")
+
+    def search_question(self, event=None):
+        if self.selected_planet is None:
+            self.answer_label.config(text="Select a planet first.")
             return
 
-        input_widget = event.widget if event is not None else question_entry
+        input_widget = event.widget if event is not None else self.question_entry
         question = input_widget.get().strip()
         if not question:
-            answer_label.config(text="Type a question first.")
+            self.answer_label.config(text="Type a question first.")
             return
 
-        answer_label.config(text=answer_question(selected_planet[0], question))
+        self.answer_label.config(
+            text=answer_question(self.selected_planet, question)
+        )
 
-    search_button = tk.Button(root, text="Ask", command=search_question)
-    search_button.pack(anchor="w", padx=20)
-    question_entry.bind("<Return>", search_question)
 
+if __name__ == "__main__":
+    root = tk.Tk()
+    PlanetGui(root)
     root.mainloop()
