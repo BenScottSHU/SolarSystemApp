@@ -32,23 +32,19 @@ PLANET_TEXT_COLOURS = {
 }
 
 
-def show_planet(planet, details_label):
-    sample_moons = ", ".join(planet.moons) if planet.moons else "None"
-    details_label.config(
-        text=(
+def answer_question(planet, question):
+    question = question.lower()
+
+    if "everything" in question or "all about" in question:
+        sample_moons = ", ".join(planet.moons) if planet.moons else "None"
+        return (
             f"{planet.name}\n"
             f"Mass: {planet.mass_kg}\n"
             f"Average distance from the Sun: {planet.distance_km:,} million km\n"
             f"Diameter: {planet.diameter_km:,} km\n"
             f"Number of moons: {planet.moon_count}\n"
-            f"Sample moons: {sample_moons}"
+            f"Known sample moons: {sample_moons}"
         )
-    )
-
-
-def answer_question(planet, question):
-    question = question.lower()
-
     if any(word in question for word in ("diameter", "big", "size", "wide")):
         return f"{planet.name} is {planet.diameter_km:,} km in diameter."
     if any(word in question for word in ("distance", "far", "sun")):
@@ -66,7 +62,7 @@ def answer_question(planet, question):
         )
     return (
         "I can answer questions about size, distance from the Sun, mass, "
-        "or moons. Try asking, for example, “How big is this planet?”"
+        "or moons. You can also ask “Tell me everything.”"
     )
 
 
@@ -81,18 +77,18 @@ if __name__ == "__main__":
     buttons_frame = tk.Frame(root)
     buttons_frame.pack(pady=10)
 
-    details_label = tk.Label(
+    selection_label = tk.Label(
         root,
-        text="Click on a planet's button to see its information.",
+        text="Select a planet, then ask a question about it.",
         justify="left",
         anchor="w",
     )
-    details_label.pack(fill="x", padx=20, pady=10)
+    selection_label.pack(fill="x", padx=20, pady=10)
 
     def select_planet(planet):
         selected_planet[0] = planet
-        show_planet(planet, details_label)
-        answer_label.config(text=f"Ask a question about {planet.name}.")
+        selection_label.config(text=f"Selected planet: {planet.name}")
+        answer_label.config(text="")
 
     for index, planet in enumerate(PLANETS):
         button = tk.Button(
