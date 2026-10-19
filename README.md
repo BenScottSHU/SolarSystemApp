@@ -1,19 +1,21 @@
-Solar System Application (Python)
+Solar Planets Tkinter Application
+A lightweight, interactive desktop application built in Python using Tkinter. It allows users to explore facts about the 8 planets in our solar system, click on individual planets to query specific details (such as mass, distance from the Sun, and moons), and compare planets using general comparative questions.
+Features
+Interactive GUI: Click-to-select interface featuring dedicated buttons for all 8 planets with custom text colors.
+Planet-Specific Queries: Ask targeted questions about a selected planet regarding:
+-Diameter and size
+-Distance from the Sun
+-Mass and weight
+-Moon count and known moon names
+A full summary ("Tell me everything")
+Comparative General Questions: Compare planets without selecting one first by asking things like:
+-"Which planet is the heaviest?"
+-"What is the furthest planet from the Sun?"
+-"Which planet has the most moons?"
+-"Why isn't Pluto on the list?"
 
-Key Requirements: 
-1. Displays information about planets within our solar system including
-- Name
-- Mass
-- Distance from the Sun
-- A list of the planets moons (reasonable)
-(information used from Wikipedia)
 
-2. Users should be able to query information about each planet such as;
-- How big is Planet X?
-- How far is Planet X from the sun? 
-- How many moons does Planet X have? 
-- Tell me everything about Planet X? 
-
+Created by Ben Scott using Python 3.14
 
 
   
