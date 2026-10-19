@@ -1,11 +1,20 @@
 import tkinter as tk
 
 
-# Stores the facts and button text colour used for one planet.
+# Stores the facts for one planet.
 class Planet:
-    def __init__(self,name,mass_kg,distance_km,diameter_km,moon_count,moons,text_colour,):
+    def __init__(
+        self,
+        name,
+        mass_earths,
+        distance_km,
+        diameter_km,
+        moon_count,
+        moons,
+        text_colour,
+    ):
         self.name = name
-        self.mass_kg = mass_kg
+        self.mass_earths = mass_earths
         self.distance_km = distance_km
         self.diameter_km = diameter_km
         self.moon_count = moon_count
@@ -13,28 +22,91 @@ class Planet:
         self.text_colour = text_colour
 
 
+# Holds the planet facts used by the app.
 PLANETS = [
-    # Planet distances are in millions of kilometres; figures are from NASA.
-    Planet("Mercury", "3.3011×10^23kg", 58, 4_879, 0, (), "#555555"),
-    Planet("Venus", "4.8675 × 10^24kg", 108, 12_104, 0, (), "#9C5700"),
-    Planet("Earth", "5.9722x10^24kg", 150, 12_756, 1, ("Moon",), "#176B2C"),
-    Planet("Mars", "6.4171x10^23kg", 228, 6_779, 2, ("Phobus", "Deimos"), "#B22222"),
-    Planet("Jupiter", "1.8982×10^27kg", 778, 139_820, 95, ("Io", "Europa", "Ganymede", "Callisto"), "#8B4513"),
-    Planet("Saturn", "5.6834×10^26kg", 1434, 116_460, 146, ("Titan", "Enceladus", "Rhea", "Iapetus"), "#806000"),
-    Planet("Uranus", "8.6810×10^25kg", 2871, 50_724, 28, ("Titania", "Oberon", "Umbriel", "Ariel", "Miranda"), "#007C91"),
-    Planet("Neptune", "1.02413×10^26kg", 4495, 49_244, 16, ("Triton", "Nereid", "Proteus", "Larissa"), "#2446A6"),
+    # Distances are average distances from the Sun, measured in millions of km.
+    Planet("Mercury", 0.055274, 58, 4_879, 0, (), "#555555"),
+    Planet("Venus", 0.81503, 108, 12_104, 0, (), "#9C5700"),
+    Planet("Earth", 1.0, 150, 12_756, 1, ("Moon",), "#176B2C"),
+    Planet("Mars", 0.10745, 228, 6_779, 2, ("Phobus", "Deimos"), "#B22222"),
+    Planet("Jupiter", 317.84, 778, 139_820, 95, ("Io", "Europa", "Ganymede", "Callisto"), "#8B4513"),
+    Planet("Saturn", 95.164, 1434, 116_460, 146, ("Titan", "Enceladus", "Rhea", "Iapetus"), "#806000"),
+    Planet("Uranus", 14.536, 2871, 50_724, 28, ("Titania", "Oberon", "Umbriel", "Ariel", "Miranda"), "#007C91"),
+    Planet("Neptune", 17.148, 4495, 49_244, 16, ("Triton", "Nereid", "Proteus", "Larissa"), "#2446A6"),
 ]
 
 
+# Displays a planet's mass in Earth-mass units.
+def format_mass(mass_earths):
+    unit = "Earth" if mass_earths == 1 else "Earths"
+    return f"{mass_earths:g} {unit}"
+
+
+# Answers questions that compare planets or ask about Pluto.
+def answer_general_question(question):
+    question = question.lower()
+
+    if "pluto" in question:
+        return (
+            "Pluto got reclassified as a dwarf planet in 2006. "
+            "Pluto is about half the size of the USA, but is still a part of our solar system"
+        )
+
+    if any(word in question for word in ("heaviest", "most massive", "mass", "weight")):
+        planet = max(PLANETS, key=lambda item: item.mass_earths)
+        return (
+            f"{planet.name} is the heaviest planet, with a mass of "
+            f"{format_mass(planet.mass_earths)}."
+        )
+    if any(word in question for word in ("lightest", "least massive")):
+        planet = min(PLANETS, key=lambda item: item.mass_earths)
+        return (
+            f"{planet.name} is the lightest planet, with a mass of "
+            f"{format_mass(planet.mass_earths)}."
+        )
+
+    if any(word in question for word in ("furthest", "farthest", "most distant")):
+        planet = max(PLANETS, key=lambda item: item.distance_km)
+        return (
+            f"{planet.name} is furthest from the Sun, at an average distance "
+            f"of {planet.distance_km:,} million km."
+        )
+    if any(word in question for word in ("nearest", "closest")):
+        planet = min(PLANETS, key=lambda item: item.distance_km)
+        return (
+            f"{planet.name} is closest to the Sun, at an average distance "
+            f"of {planet.distance_km:,} million km."
+        )
+
+    if "moon" in question and any(word in question for word in ("most", "many")):
+        planet = max(PLANETS, key=lambda item: item.moon_count)
+        return f"{planet.name} has the most moons in this list: {planet.moon_count}."
+    if "moon" in question and any(word in question for word in ("fewest", "least")):
+        planet = min(PLANETS, key=lambda item: item.moon_count)
+        return f"{planet.name} has the fewest moons in this list: {planet.moon_count}."
+
+    if any(word in question for word in ("biggest", "largest", "diameter", "size")):
+        planet = max(PLANETS, key=lambda item: item.diameter_km)
+        return (
+            f"{planet.name} is the biggest planet by diameter, "
+            f"at {planet.diameter_km:,} km."
+        )
+
+    return (
+        "Try asking which planet is biggest, furthest from the Sun, heaviest, "
+        "or has the most moons. You can also ask why Pluto isn't on the list."
+    )
+
+
+# Answers questions about the selected planet.
 def answer_question(planet, question):
-    # Match common keywords in the question to the planet fact being requested.
     question = question.lower()
 
     if "everything" in question or "all about" in question:
         sample_moons = ", ".join(planet.moons) if planet.moons else "None"
         return (
             f"{planet.name}\n"
-            f"Mass: {planet.mass_kg}\n"
+            f"Mass: {format_mass(planet.mass_earths)}\n"
             f"Average distance from the Sun: {planet.distance_km:,} million km\n"
             f"Diameter: {planet.diameter_km:,} km\n"
             f"Number of moons: {planet.moon_count}\n"
@@ -48,7 +120,7 @@ def answer_question(planet, question):
             f"{planet.distance_km:,} million km from the Sun."
         )
     if any(word in question for word in ("mass", "heavy", "weigh")):
-        return f"The mass of {planet.name} is {planet.mass_kg}."
+        return f"The mass of {planet.name} is {format_mass(planet.mass_earths)}."
     if "moon" in question:
         sample_moons = ", ".join(planet.moons) if planet.moons else "None"
         return (
@@ -61,8 +133,9 @@ def answer_question(planet, question):
     )
 
 
-# Builds the window and handles planet selection, questions, and reset.
+# Creates the app window and connects its controls.
 class PlanetGui:
+    # Sets up the window and initial state.
     def __init__(self, root):
         self.root = root
         self.selected_planet = None
@@ -70,6 +143,7 @@ class PlanetGui:
         self.root.geometry("520x420")
         self.create_widgets()
 
+    # Creates the labels, planet buttons, and question controls.
     def create_widgets(self):
         banner = tk.Label(
             self.root,
@@ -86,7 +160,10 @@ class PlanetGui:
 
         self.selection_label = tk.Label(
             self.root,
-            text="Select a planet, then ask a question about it.",
+            text=(
+                "Select a planet to ask about it, or use General question "
+                "to compare planets."
+            ),
             font=("TkDefaultFont", 12, "bold"),
             justify="left",
             anchor="w",
@@ -100,14 +177,20 @@ class PlanetGui:
                 width=12,
                 height=2,
                 fg=planet.text_colour,
-                # Capture this planet so each button selects its own planet.
+                # Keep each button connected to its own planet.
                 command=lambda selected=planet: self.select_planet(selected),
             )
             button.grid(row=index // 4, column=index % 4, padx=5, pady=6)
 
         question_label = tk.Label(
             self.root,
-            text="Ask a question about the selected planet:",
+            text=(
+                "Ask about the selected planet (e.g. 'How big is it?'). "
+                "To compare planets, enter your question and click "
+                "General question."
+            ),
+            justify="left",
+            wraplength=480,
         )
         question_label.pack(anchor="w", padx=20, pady=(10, 2))
 
@@ -135,6 +218,15 @@ class PlanetGui:
         )
         search_button.pack(side="left", padx=(0, 8))
 
+        general_button = tk.Button(
+            button_frame,
+            text="General question",
+            width=16,
+            height=2,
+            command=self.search_general_question,
+        )
+        general_button.pack(side="left", padx=(0, 8))
+
         reset_button = tk.Button(
             button_frame,
             text="Reset",
@@ -153,26 +245,31 @@ class PlanetGui:
         )
         credit_label.pack(side="bottom", anchor="e", padx=12, pady=6)
 
+    # Sets the selected planet and clears the previous answer.
     def select_planet(self, planet):
         self.selected_planet = planet
         self.selection_label.config(text=f"Selected planet: {planet.name}")
         self.answer_label.config(text="")
 
+    # Clears the selection, question, and answer.
     def reset(self):
-        # Restore the prompt and clear the current selection and conversation.
         self.selected_planet = None
         self.selection_label.config(
-            text="Select a planet, then ask a question about it."
+            text=(
+                "Select a planet to ask about it, or use General question "
+                "to compare planets."
+            )
         )
         self.question_entry.delete(0, tk.END)
         self.answer_label.config(text="")
 
+    # Answers a question about the selected planet.
     def search_question(self, event=None):
         if self.selected_planet is None:
             self.answer_label.config(text="Select a planet first.")
             return
 
-        # Enter passes an event; the Ask button calls this without one.
+        # Use the entry field whether called by Enter or the Ask button.
         input_widget = event.widget if event is not None else self.question_entry
         question = input_widget.get().strip()
         if not question:
@@ -183,7 +280,17 @@ class PlanetGui:
             text=answer_question(self.selected_planet, question)
         )
 
+    # Answers a general question without requiring a selected planet.
+    def search_general_question(self):
+        question = self.question_entry.get().strip()
+        if not question:
+            self.answer_label.config(text="Type a question first.")
+            return
 
+        self.answer_label.config(text=answer_general_question(question))
+
+
+# Starts the app when this file is run directly.
 if __name__ == "__main__":
     root = tk.Tk()
     PlanetGui(root)
