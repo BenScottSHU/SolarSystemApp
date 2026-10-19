@@ -23,6 +23,7 @@ class Planet:
 
 
 # Holds the planet facts used by the app.
+# Planet information references: https://www.nasa.gov and https://www.wikipedia.org/
 PLANETS = [
     # Distances are average distances from the Sun, measured in millions of km.
     Planet("Mercury", 0.055274, 58, 4_879, 0, (), "#555555"),
@@ -143,6 +144,10 @@ class PlanetGui:
         self.root.geometry("520x420")
         self.create_widgets()
 
+    # Tkinter widget and window-layout reference:
+    # https://www.pythontutorial.net/tkinter/
+    # Grid-layout reference for the planet buttons:
+    # https://www.pythonguis.com/tutorials/create-ui-with-tkinter-grid-layout-manager/
     # Creates the labels, planet buttons, and question controls.
     def create_widgets(self):
         banner = tk.Label(
